@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
+import { CurrencyValue } from "./components/CurrencyValue";
 import { convertToEUR } from "./convertToEUR";
+
+export const ENDPOINT_COINS = "https://api.coinpaprika.com/v1/coins";
+export const ENDPOINT_MARKET = (cryptoId) =>
+  `https://api.coinpaprika.com/v1/coins/${cryptoId}/markets`;
 
 export const Content = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -7,7 +12,7 @@ export const Content = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("https://api.coinpaprika.com/v1/coins")
+    fetch(ENDPOINT_COINS)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -26,13 +31,15 @@ export const Content = () => {
   const [currentCryptoId, setCurrentCrypto] = useState("btc-bitcoin");
   const [currentMarket, setCurrentMarket] = useState();
 
+  console.log({ currentCryptoId });
+
   const currentCrypto = displayedData?.find(({ id }) => id === currentCryptoId);
 
   useEffect(() => {
     if (!currentCryptoId) {
       return;
     }
-    fetch(`https://api.coinpaprika.com/v1/coins/${currentCryptoId}/markets`)
+    fetch(ENDPOINT_MARKET(currentCryptoId))
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -73,7 +80,9 @@ export const Content = () => {
       <div>
         <select onChange={(e) => setCurrentCrypto(e.target.value)}>
           {displayedData?.map((crypto) => (
-            <option value={crypto.id}>{crypto.name}</option>
+            <option key={crypto.id} value={crypto.id}>
+              {crypto.name}
+            </option>
           ))}
         </select>
       </div>
@@ -83,9 +92,11 @@ export const Content = () => {
           value={converterInput}
           onChange={(e) => setConverterInput(e.target.value)}
         ></input>
-        <span style={{ marginLeft: "20px" }}>
-          {currentCrypto?.symbol} is <strong>{convertedValue}</strong> EUR
-        </span>
+        <CurrencyValue
+          currency="EUR"
+          value={convertedValue}
+          style={{ marginLeft: "20px" }}
+        />
       </div>
     </div>
   );
