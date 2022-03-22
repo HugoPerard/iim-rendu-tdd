@@ -75,10 +75,13 @@ export const Content = () => {
   console.log({ displayedData, currentCrypto, currentMarket });
 
   return (
-    <div style={{ textAlign: "start" }}>
+    <div style={{ textAlign: "start" }} data-test="container">
       <p>Crypto converter</p>
       <div>
-        <select onChange={(e) => setCurrentCrypto(e.target.value)}>
+        <select
+          onChange={(e) => setCurrentCrypto(e.target.value)}
+          data-test="cryptos-select"
+        >
           {displayedData?.map((crypto) => (
             <option key={crypto.id} value={crypto.id}>
               {crypto.name}
@@ -91,6 +94,7 @@ export const Content = () => {
           type="number"
           value={converterInput}
           onChange={(e) => setConverterInput(e.target.value)}
+          data-test="quantity-input"
         ></input>
         <CurrencyValue
           currency="EUR"
